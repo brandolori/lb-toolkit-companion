@@ -1,12 +1,29 @@
-import React, { useState } from 'react';
-import { SafeAreaView, StatusBar, Text, TextInput, View, VirtualizedList } from 'react-native';
-
-import Clipboard, { DateFilter } from './Clipboard';
+import React, { useEffect, useState } from 'react';
+import { AppState, Button, SafeAreaView, StatusBar, Text, TextInput, View } from 'react-native';
+import ClipList, { DateFilter, pushClip } from './ClipList';
 import { Picker } from '@react-native-picker/picker';
+import Clipboard from '@react-native-clipboard/clipboard';
 
 const App = () => {
   const [dateFilter, setDateFilter] = useState<DateFilter>("today")
   const [text, setText] = useState("")
+
+  const onSubmit = () => {
+    setText("")
+    pushClip(text)
+  }
+
+  const putClipboardInField = async () => {
+    const content = await Clipboard.getString()
+    setText(content)
+  }
+
+
+  useEffect(() => {
+    putClipboardInField()
+    const subscription = AppState.addEventListener("focus", putClipboardInField)
+    return () => subscription.remove()
+  }, [])
 
   return (
     <SafeAreaView style={{ backgroundColor: "#1a1b1e" }}>
@@ -38,12 +55,27 @@ const App = () => {
           </View>
         </View>
         <View style={{ flex: 1 }}>
-          <Clipboard dateFilter={dateFilter} />
+          <ClipList dateFilter={dateFilter} />
         </View>
-        <TextInput
-          onChangeText={(ev) => setText(ev)}
-          value={text}
-        />
+        <View style={{ flexDirection: "row", alignItems: "center", paddingTop: 5 }}>
+          <TextInput
+            style={{ flex: 1 }}
+            onChangeText={(ev) => setText(ev)}
+            onSubmitEditing={onSubmit}
+            value={text}
+          />
+          <Button
+            color="#25262b"
+            title="Paste"
+            onPress={() => putClipboardInField()}
+          />
+          <View style={{ width: 10 }} />
+          <Button
+            color="#25262b"
+            title="Send"
+            onPress={() => onSubmit()}
+          />
+        </View>
       </View>
     </SafeAreaView>
   )

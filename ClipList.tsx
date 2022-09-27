@@ -42,6 +42,16 @@ const fetchClips = async (dateFilter?: DateFilter) => {
     return data.sort((a, b) => a.date > b.date ? -1 : 1)
 }
 
+export const pushClip = async (clip: string) => {
+    if (!clip)
+        return
+    await getTableClient().createEntity({
+        partitionKey: "phone",
+        rowKey: Date.now().toString(),
+        text: clip
+    })
+}
+
 const subtextColor = "#909296"
 
 export default ({ dateFilter }: { dateFilter: DateFilter }) => {
@@ -81,7 +91,8 @@ export default ({ dateFilter }: { dateFilter: DateFilter }) => {
                         <View style={{ margin: 15 }}>
 
                             <Text style={{ fontSize: 15, color: "white" }} >
-                                {el.text}
+                                {el.text.substring(0, 200)}
+                                {el.text.length > 200 && "..."}
                             </Text>
                         </View>
                         <View style={{ flexDirection: "row", justifyContent: "space-between", marginHorizontal: 15, marginVertical: 15 }}>
