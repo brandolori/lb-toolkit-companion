@@ -3,44 +3,7 @@ import { AppState, Button, SafeAreaView, StatusBar, Text, TextInput, View } from
 import ClipList, { Clip, DateFilter } from './ClipList';
 import { Picker } from '@react-native-picker/picker';
 import Clipboard from '@react-native-clipboard/clipboard';
-import { getTableClient } from './azureTable';
-import { odata } from '@azure/data-tables';
-
-const fetchClips = async (dateFilter?: DateFilter) => {
-  const days = dateFilter == "today" ? 1 :
-    dateFilter == "this week" ? 7 :
-      dateFilter == "this month" ? 30 : 100000
-  const filterDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000) // 1 days ago
-
-  const data = []
-  const tableClient = getTableClient()
-  const lister = tableClient.listEntities({
-    queryOptions: {
-      filter: odata`Timestamp ge ${filterDate}`,
-    }
-  })
-
-  for await (const entity of lister) {
-    data.push({
-      date: entity.timestamp,
-      id: entity.rowKey,
-      source: entity.partitionKey,
-      text: entity.text
-    })
-  }
-
-  return data.sort((a, b) => a.date > b.date ? -1 : 1)
-}
-
-const pushClip = async (clip: string) => {
-  if (!clip)
-    return
-  await getTableClient().createEntity({
-    partitionKey: "phone",
-    rowKey: Date.now().toString(),
-    text: clip
-  })
-}
+import { fetchClips, pushClip } from './azureTables';
 
 const App = () => {
   const [dateFilter, setDateFilter] = useState<DateFilter>("today")
@@ -116,14 +79,14 @@ const App = () => {
         <View style={{ flexDirection: "row", alignItems: "center", paddingTop: 5 }}>
           <TextInput
             style={{ flex: 1 }}
-            onChangeText={(ev) => setText(ev)}
+            onChangeText={setText}
             onSubmitEditing={onSubmit}
             value={text}
           />
           <Button
             color="#25262b"
             title="Paste"
-            onPress={() => putClipboardInField()}
+            onPress={putClipboardInField}
           />
           <View style={{ width: 10 }} />
           <Button

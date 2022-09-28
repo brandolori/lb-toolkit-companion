@@ -1,7 +1,6 @@
-import React, { } from "react"
+import React from "react"
 import { ScrollView, View, Text, TouchableNativeFeedback, ToastAndroid, RefreshControl } from "react-native"
 import Clipboard from '@react-native-clipboard/clipboard';
-
 
 export type Clip = {
     id: string,
@@ -20,12 +19,11 @@ type ClipListProps = {
     clips: Clip[]
 }
 
+const showToast = () => {
+    ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT);
+}
+
 export default ({ refreshing, updateClips, clips }: ClipListProps) => {
-
-
-    const showToast = () => {
-        ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT);
-    };
 
     return <ScrollView
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={updateClips} />}
