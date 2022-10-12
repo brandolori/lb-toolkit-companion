@@ -2,9 +2,9 @@ import { AzureSASCredential, odata, TableClient } from "@azure/data-tables";
 import { DateFilter } from "./ClipList";
 
 const getTableClient = () => {
-    const account = "lbtoolkitkeyboard"
-    const SASToken = "?sv=2021-06-08&ss=t&srt=sco&sp=rwdlacu&se=2052-09-12T15:48:19Z&st=2022-09-12T07:48:19Z&spr=https&sig=OK5t7De%2B9ElUfVtxC%2BBq0OiZasMbz%2BIbgnidHMBRDYY%3D"
-    const tableName = "cpliboard"
+    const account = "lbtoolkitclips"
+    const SASToken = "?sv=2021-06-08&ss=t&srt=sco&sp=rwdlacu&se=2022-10-12T17:46:28Z&st=2022-10-12T09:46:28Z&spr=https&sig=pNfDi3%2F1qpympcQhzfSMerwEpmSp3hCnWgpaqODzmUQ%3D"
+    const tableName = "clips"
     return new TableClient(
         `https://${account}.table.core.windows.net`,
         tableName,
