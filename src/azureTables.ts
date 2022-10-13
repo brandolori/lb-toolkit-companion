@@ -3,7 +3,7 @@ import { DateFilter } from "./ClipList";
 
 const getTableClient = () => {
     const account = "lbtoolkitclips"
-    const SASToken = "?sv=2021-06-08&ss=t&srt=sco&sp=rwdlacu&se=2022-10-12T17:46:28Z&st=2022-10-12T09:46:28Z&spr=https&sig=pNfDi3%2F1qpympcQhzfSMerwEpmSp3hCnWgpaqODzmUQ%3D"
+    const SASToken = "?sv=2021-06-08&ss=t&srt=sco&sp=rwdlacu&se=2099-10-13T16:41:03Z&st=2022-10-13T08:41:03Z&spr=https&sig=S9nw7XCIxhgzNm0oT8y8Co2jGyvtq0MwD3Gva1XpXQw%3D"
     const tableName = "clips"
     return new TableClient(
         `https://${account}.table.core.windows.net`,
