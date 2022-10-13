@@ -1,15 +1,16 @@
-import { AzureSASCredential, odata, TableClient } from "@azure/data-tables";
-import { DateFilter } from "./ClipList";
+import { AzureSASCredential, odata, TableClient } from "@azure/data-tables"
+import { DateFilter } from "./ClipList"
+import { getSetting } from "./settings"
 
-const getTableClient = () => {
-    const account = "lbtoolkitclips"
-    const SASToken = "?sv=2021-06-08&ss=t&srt=sco&sp=rwdlacu&se=2099-10-13T16:41:03Z&st=2022-10-13T08:41:03Z&spr=https&sig=S9nw7XCIxhgzNm0oT8y8Co2jGyvtq0MwD3Gva1XpXQw%3D"
-    const tableName = "clips"
+const getTableClient = async () => {
+    const account = await getSetting("azureStorageAccount")
+    const SASToken = await getSetting("azureSASToken")
+    const tableName = await getSetting("azureTableName")
     return new TableClient(
         `https://${account}.table.core.windows.net`,
         tableName,
         new AzureSASCredential(SASToken)
-    );
+    )
 
 }
 
@@ -20,8 +21,8 @@ const fetchClips = async (dateFilter?: DateFilter) => {
     const filterDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000) // 1 days ago
 
     const data = []
-    const tableClient = getTableClient()
-    const lister = tableClient.listEntities({
+    const client = await getTableClient()
+    const lister = client.listEntities({
         queryOptions: {
             filter: odata`Timestamp ge ${filterDate}`,
         }
@@ -42,7 +43,8 @@ const fetchClips = async (dateFilter?: DateFilter) => {
 const pushClip = async (clip: string) => {
     if (!clip)
         return
-    await getTableClient().createEntity({
+    const client = await getTableClient()
+    client.createEntity({
         partitionKey: "phone",
         rowKey: Date.now().toString(),
         text: clip
