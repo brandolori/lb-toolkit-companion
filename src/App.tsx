@@ -14,6 +14,7 @@ const App = () => {
                 component={Home}
                 options={{
                     title: "✂️ lb-toolkit clipboard",
+                    headerShadowVisible: false,
                     headerStyle: {
                         backgroundColor: '#1a1b1e',
                     },
@@ -29,6 +30,7 @@ const App = () => {
                 component={Config}
                 options={{
                     title: "🔧 configuration",
+                    headerShadowVisible: false,
                     headerStyle: {
                         backgroundColor: '#1a1b1e',
                     },
