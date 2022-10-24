@@ -1,5 +1,5 @@
 import { AzureSASCredential, odata, TableClient } from "@azure/data-tables"
-import { DateFilter } from "./ClipList"
+import { Clip, DateFilter } from "./ClipList"
 import { getSetting } from "./settings"
 
 const getTableClient = async () => {
@@ -14,13 +14,13 @@ const getTableClient = async () => {
 
 }
 
-const fetchClips = async (dateFilter?: DateFilter) => {
+const fetchClips = async (dateFilter?: DateFilter): Promise<Clip[]> => {
     const days = dateFilter == "today" ? 1 :
         dateFilter == "this week" ? 7 :
             dateFilter == "this month" ? 30 : 100000
     const filterDate = new Date(Date.now() - days * 24 * 60 * 60 * 1000) // 1 days ago
 
-    const data = []
+    const data: Clip[] = []
     const client = await getTableClient()
     const lister = client.listEntities({
         queryOptions: {
@@ -32,8 +32,9 @@ const fetchClips = async (dateFilter?: DateFilter) => {
         data.push({
             date: entity.timestamp,
             id: entity.rowKey,
-            source: entity.partitionKey,
-            text: entity.text
+            source: entity.partitionKey as "pc" | "phone",
+            text: entity.text as string,
+            isUrl: entity.isUrl as boolean ?? false
         })
     }
 

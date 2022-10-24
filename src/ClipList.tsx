@@ -1,17 +1,16 @@
 import React from "react"
-import { ScrollView, View, Text, TouchableNativeFeedback, ToastAndroid, RefreshControl } from "react-native"
-import Clipboard from '@react-native-clipboard/clipboard';
+import { ScrollView, View, Text, TouchableNativeFeedback, ToastAndroid, RefreshControl, Linking, StyleSheet } from "react-native"
+import Clipboard from '@react-native-clipboard/clipboard'
 
 export type Clip = {
     id: string,
     date: string,
     text: string,
-    source: "pc" | "phone"
+    source: "pc" | "phone",
+    isUrl: boolean
 }
 
 export type DateFilter = "today" | "this week" | "this month" | "all"
-
-const subtextColor = "#909296"
 
 type ClipListProps = {
     refreshing: boolean,
@@ -20,8 +19,15 @@ type ClipListProps = {
 }
 
 const showToast = () => {
-    ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT);
+    ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT)
 }
+
+const styles = StyleSheet.create({
+    scrollView: { marginVertical: 10, borderRadius: 10, overflow: "hidden" },
+    clipText: { fontSize: 15, color: "white" },
+    clipFooter: { flexDirection: "row", justifyContent: "space-between", marginHorizontal: 15, marginVertical: 15 },
+    clipFooterContent: { fontWeight: "bold", color: "#909296" }
+})
 
 export default ({ refreshing, updateClips, clips }: ClipListProps) => {
 
@@ -29,7 +35,7 @@ export default ({ refreshing, updateClips, clips }: ClipListProps) => {
         refreshControl={<RefreshControl refreshing={refreshing} onRefresh={updateClips} />}
     >
         {clips.map(el =>
-            <View key={el.id} style={{ marginVertical: 10, borderRadius: 10, overflow: "hidden" }}>
+            <View key={el.id} style={styles.scrollView}>
 
                 <TouchableNativeFeedback
                     onPress={() => {
@@ -42,16 +48,18 @@ export default ({ refreshing, updateClips, clips }: ClipListProps) => {
                     <View style={{ backgroundColor: "#25262b" }}>
                         <View style={{ margin: 15 }}>
 
-                            <Text style={{ fontSize: 15, color: "white" }} >
+                            <Text
+                                style={{ ...styles.clipText, textDecorationLine: el.isUrl ? "underline" : "none" }}
+                                onPress={el.isUrl ? (() => Linking.openURL(el.text)) : undefined} >
                                 {el.text.substring(0, 200)}
                                 {el.text.length > 200 && "..."}
                             </Text>
                         </View>
-                        <View style={{ flexDirection: "row", justifyContent: "space-between", marginHorizontal: 15, marginVertical: 15 }}>
-                            <Text style={{ fontWeight: "bold", color: subtextColor }} >
+                        <View style={styles.clipFooter}>
+                            <Text style={styles.clipFooterContent} >
                                 {new Date(el.date).toLocaleString("en-uk")}
                             </Text>
-                            <Text style={{ fontWeight: "bold", color: subtextColor }} >
+                            <Text style={styles.clipFooterContent} >
                                 {
                                     el.source == "pc"
                                         ? "PC"
