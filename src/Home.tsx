@@ -1,9 +1,9 @@
 import React, { useEffect, useState } from 'react'
 import { AppState, Button, SafeAreaView, StatusBar, Text, TextInput, View } from 'react-native'
-import ClipList, { Clip, DateFilter } from './ClipList'
+import ClipList from './ClipList'
 import { Picker } from '@react-native-picker/picker'
 import Clipboard from '@react-native-clipboard/clipboard'
-import { fetchClips, pushClip } from './azureTables'
+import { Clip, DateFilter, fetchClips, pushClip } from './azureTables'
 
 const Home = ({ navigation }) => {
     const [dateFilter, setDateFilter] = useState<DateFilter>("today")

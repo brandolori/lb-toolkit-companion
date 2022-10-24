@@ -1,6 +1,17 @@
 import { AzureSASCredential, odata, TableClient } from "@azure/data-tables"
-import { Clip, DateFilter } from "./ClipList"
 import { getSetting } from "./settings"
+
+export type DateFilter = "today" | "this week" | "this month" | "all"
+
+export type Clip = {
+    id: string,
+    date: string,
+    text: string,
+    source: ClipSource
+    isUrl: boolean
+}
+
+type ClipSource = "pc" | "phone"
 
 const getTableClient = async () => {
     const account = await getSetting("azureStorageAccount")
@@ -11,7 +22,6 @@ const getTableClient = async () => {
         tableName,
         new AzureSASCredential(SASToken)
     )
-
 }
 
 const fetchClips = async (dateFilter?: DateFilter): Promise<Clip[]> => {
@@ -32,7 +42,7 @@ const fetchClips = async (dateFilter?: DateFilter): Promise<Clip[]> => {
         data.push({
             date: entity.timestamp,
             id: entity.rowKey,
-            source: entity.partitionKey as "pc" | "phone",
+            source: entity.partitionKey as ClipSource,
             text: entity.text as string,
             isUrl: entity.isUrl as boolean ?? false
         })
@@ -45,10 +55,18 @@ const pushClip = async (clip: string) => {
     if (!clip)
         return
     const client = await getTableClient()
+
+    let isUrl = false
+    try {
+        new URL(clip)
+        isUrl = true
+    } catch (e) { }
+
     client.createEntity({
         partitionKey: "phone",
         rowKey: Date.now().toString(),
-        text: clip
+        text: clip,
+        isUrl
     })
 }
 

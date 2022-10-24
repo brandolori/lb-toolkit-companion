@@ -1,22 +1,7 @@
 import React from "react"
 import { ScrollView, View, Text, TouchableNativeFeedback, ToastAndroid, RefreshControl, Linking, StyleSheet } from "react-native"
 import Clipboard from '@react-native-clipboard/clipboard'
-
-export type Clip = {
-    id: string,
-    date: string,
-    text: string,
-    source: "pc" | "phone",
-    isUrl: boolean
-}
-
-export type DateFilter = "today" | "this week" | "this month" | "all"
-
-type ClipListProps = {
-    refreshing: boolean,
-    updateClips: () => void,
-    clips: Clip[]
-}
+import { Clip } from "./azureTables"
 
 const showToast = () => {
     ToastAndroid.show("Copied to clipboard", ToastAndroid.SHORT)
@@ -28,6 +13,12 @@ const styles = StyleSheet.create({
     clipFooter: { flexDirection: "row", justifyContent: "space-between", marginHorizontal: 15, marginVertical: 15 },
     clipFooterContent: { fontWeight: "bold", color: "#909296" }
 })
+
+type ClipListProps = {
+    refreshing: boolean,
+    updateClips: () => void,
+    clips: Clip[]
+}
 
 export default ({ refreshing, updateClips, clips }: ClipListProps) => {
 
