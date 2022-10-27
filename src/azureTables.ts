@@ -58,8 +58,9 @@ const pushClip = async (clip: string) => {
 
     let isUrl = false
     try {
-        new URL(clip)
-        isUrl = true
+        const url = new URL(clip)
+        if (url.protocol == "https:" || url.protocol == "http:")
+            isUrl = true
     } catch (e) { }
 
     client.createEntity({
