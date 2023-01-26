@@ -87,12 +87,6 @@ const Home = ({ navigation }) => {
                     />
                     <Button
                         color="#25262b"
-                        title="Paste"
-                        onPress={putClipboardInField}
-                    />
-                    <View style={{ width: 10 }} />
-                    <Button
-                        color="#25262b"
                         title="Send"
                         onPress={async () => {
                             await onSubmit()

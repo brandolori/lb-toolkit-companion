@@ -1,6 +1,8 @@
 import React, { useEffect, useState } from "react"
 import { SafeAreaView, StatusBar, Text, TextInput, View } from "react-native"
+import createDebouncer from "./createDebouncer"
 import { getSetting, setSetting, settingStrings } from "./settings"
+const debounce = createDebouncer(300)
 
 const Config = () => {
 
@@ -10,16 +12,16 @@ const Config = () => {
             key: el,
             state,
             setState,
-            updateAndSetState: async (value: string) => {
-                await setSetting(el, value)
+            updateAndSetState: (value: string) => {
                 setState(value)
+                debounce(() => setSetting(el, value))
             }
         }
     })
 
     useEffect(() => {
         settingStates.forEach(async el => el.setState(await getSetting(el.key)))
-    })
+    }, [])
 
 
     return <SafeAreaView style={{ backgroundColor: "#1a1b1e" }}>
